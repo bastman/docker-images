@@ -10,7 +10,11 @@ DOCKERHUB_IMAGE_NAME=$(SERVICE_NAME)
 DOCKERHUB_TAG_REMOTE=$(DOCKERHUB_REGISTRY_HOST)/bastman77/$(DOCKERHUB_IMAGE_NAME):$(SERVICE_VERSION)
 
 ifeq ($(shell cat $(SERVICE_VERSION_FILE)),)
-$(shell date -u +"%Y-%m-%dT%H.%M.%SZ" > $(SERVICE_VERSION_FILE))
+GIT_BRANCH_NAME=$(shell git rev-parse --abbrev-ref HEAD)
+GIT_COMMIT_HASH=$(shell git rev-parse HEAD | cut -c 1-8)
+BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H.%M.%SZ")
+SERVICE_VERSION=$(BUILD_TIME)-$(GIT_COMMIT_HASH)-$(GIT_BRANCH_NAME)
+$(shell $(SERVICE_VERSION) > $(SERVICE_VERSION_FILE))
 @echo "(new) service.version: $(SERVICE_VERSION)"
 endif
 
